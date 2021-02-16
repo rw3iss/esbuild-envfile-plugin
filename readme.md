@@ -1,5 +1,5 @@
 # Description:
-This package is a plugin for esbuild. When used, it will look for a .env file in the current project file's directory, or any parent, until it finds one.
+This package is a plugin for [esbuild](https://github.com/evanw/esbuild). When used, it will look for a .env file in the current project file's directory, or any parent, until it finds one.
 It will combine the found .env variables with the system-wide process.env variables, which can all be used from the project file.
 It uses the 'dotenv' package to parse the .env file (the package isn't loaded into your project, only into the esbuild script).
 
