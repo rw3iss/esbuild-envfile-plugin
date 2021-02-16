@@ -1,16 +1,18 @@
-# How to use:
-
-## Description:
+# Description:
 This package is a plugin for esbuild. When used, it will look for a .env file in the current project file's directory, or any parent, until it finds one.
 It will combine the found .env variables with the system-wide process.env variables, which can all be used from the project file.
 It uses the 'dotenv' package to parse the .env file (the package isn't loaded into your project, only into the esbuild script).
 
 ## Installation:
-npm install esbuild esbuild-envfile-plugin dotenv --save-dev
+```npm install esbuild esbuild-envfile-plugin dotenv --save-dev```
 
 ## In esbuild script:
 ```
-import envFilePlugin from 'esbuild-envfile-plugin';
+const envFilePlugin = require('esbuild-envfile-plugin');
+
+require('esbuild').build({
+    plugins: [envFilePlugin]
+});
 ```
 
 ## Usage in project:
