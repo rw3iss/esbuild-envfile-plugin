@@ -8,7 +8,12 @@ module.exports = {
         function _findEnvFile(dir) {
             if (!fs.existsSync(dir))
                 return false;
-            let filePath = `${dir}/.env`;
+            let env = process.env.NODE_ENV || 'development';
+            let filePath = `${dir}/.env.${env}`;
+            if ((fs.existsSync(filePath))) {
+                return filePath;
+            }
+            filePath = `${dir}/.env`;
             if ((fs.existsSync(filePath))) {
                 return filePath;
             } else {
