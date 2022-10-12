@@ -6,7 +6,7 @@ module.exports = {
         const define = {};
         const defineNoQuotes = {};
 
-        for (const k in process.env) {
+        for (let k in process.env) {
             k = k.replace(/ /g, ' '); // hack for now.
             
             // Bypass windows errors
