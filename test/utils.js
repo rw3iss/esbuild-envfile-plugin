@@ -7,7 +7,7 @@ module.exports = {
         const defineNoQuotes = {};
 
         for (let k in process.env) {
-            k = k.replace(/ /g, ' '); // hack for now.
+            k = k.replace(/ /g, ''); // hack for now.
             
             // Bypass windows errors
             if (k === 'CommonProgramFiles(x86)' || k === 'ProgramFiles(x86)') {
