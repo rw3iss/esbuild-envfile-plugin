@@ -1,26 +1,24 @@
 const path = require("path");
 const fs = require("fs");
 
-const ENV = process.env.NODE_ENV || "development";
+const DEFAULT_ENV = process.env.NODE_ENV || "development";
 
-function _findEnvFile(dir) {
+function _findEnvFile(dir, rootPath, env) {
     try {
-        if (!fs.existsSync(dir)) {
-            return undefined;
-        } else if (fs.existsSync(`${dir}/.env.${ENV}`)) {
-            return `${dir}/.env.${ENV}`;
+        if (fs.existsSync(`${dir}/.env.${env}`)) {
+            return `${dir}/.env.${env}`;
         } else if (fs.existsSync(`${dir}/.env`)) {
             return `${dir}/.env`;
-        } else {
-            const next = path.resolve(dir, "../");
-            if (next === dir) {
-                // at root now, exit
+        } else if (dir && dir != '/') {
+            if (dir === rootPath) {
+                // stop at project root
                 return undefined;
-            } else {
-                return _findEnvFile(next);
             }
+            const next = path.resolve(dir, "../");
+            return _findEnvFile(next, rootPath, env);
         }
-    } catch(e) {
+        return undefined;
+    } catch (e) {
         console.warn("Exception in esbuild-envfile-plugin _findEnvFile():", e);
     }
 }
@@ -30,11 +28,13 @@ module.exports = {
 
     setup(build) {
         build.onResolve({ filter: /^env$/ }, async (args) => {
+            const rootPath = path.resolve('.');
+            const env = ((build.initialOptions?.define || {})['process.env.NODE_ENV'] || DEFAULT_ENV).replace(/"/g, '');
             return {
                 path: args.path,
                 pluginData: {
                     ...args.pluginData,
-                    envPath: _findEnvFile(args.resolveDir),
+                    envPath: _findEnvFile(args.resolveDir, rootPath, env),
                 },
                 namespace: "env-ns",
             };
@@ -44,7 +44,7 @@ module.exports = {
             let envPath = args.pluginData?.envPath;
             let config = {};
             let contents = '{}';
-            
+
             if (envPath) {
                 try {
                     // read in .env file contents and combine with regular .env:
@@ -52,7 +52,7 @@ module.exports = {
                     const buf = Buffer.from(data);
                     config = require("dotenv").parse(buf);
                     contents = JSON.stringify({ ...process.env, ...config });
-                } catch(e) {
+                } catch (e) {
                     console.warn('Exception in esbuild-envfile-plguin build.onLoad():', e);
                 }
             }

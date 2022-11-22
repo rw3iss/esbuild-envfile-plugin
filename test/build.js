@@ -1,27 +1,28 @@
-const envFilePlugin = require('./build/envfilePlugin.js');
-const esbuild = require('esbuild');
+//const envFilePlugin = require('esbuild-envfile-plugin');
+const envFilePlugin = require('../index.js'); // use for "live" testing :)
 const dotenv = require('dotenv');
-
-const { getNormalizedEnvVars } = require('./utils');
+const path = require('path');
+const { getNormalizedEnvDefines } = require('./utils');
 
 // Config: relative to where npm command is run:
 const APP_BASE = './src';
 const ENTRY_FILE = 'index.js';
 const OUTPUT_DIR = 'build';
 const OUTPUT_FILE = 'app.js';
-const IS_DEV = true;
 const TARGET = 'es2020';
 
-// load in environment variables as global defines for the to use
-dotenv.config({ path: `.env${process.env.NODE_ENV ? `${process.env.NODE_ENV}` : ``}` })
+// try to use dotenv to load in custom local env vars to existing node runtime env vars:
+const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env.local';
+dotenv.config({ path: envFile })
 
-const { define } = getNormalizedEnvVars();
+// collect all new env vars wrapped in quotes for passage to build define
+const { define } = getNormalizedEnvDefines();
 
 function build(entryFile, outFile) {
     console.log('build() ', entryFile, '=>', outFile)
     require('esbuild').build({
-        entryPoints: [entryFile],
-        outfile: outFile,
+        entryPoints: [path.resolve(entryFile)],
+        outfile: path.resolve(outFile),
         platform: 'node',
         bundle: true,
         target: TARGET,
@@ -29,11 +30,11 @@ function build(entryFile, outFile) {
         plugins: [envFilePlugin],
         define
     })
-    .then(r => { console.log("Build succeeded.") })
-    .catch((e) => {
-        console.log("Error building:", e.message);
-        process.exit(1)
-    })
+        .then(r => { console.log("Build succeeded.") })
+        .catch((e) => {
+            console.log("Error building:", e.message);
+            process.exit(1)
+        })
 }
 
 build(`${APP_BASE}/${ENTRY_FILE}`, `${OUTPUT_DIR}/${OUTPUT_FILE}`);
