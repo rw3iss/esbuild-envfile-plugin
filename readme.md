@@ -42,7 +42,7 @@ function build(entryFile, outFile) {
         bundle: true,
         define: { "process.env.NODE_ENV": IS_DEV ? "\"development\"" : "\"product\"" },
         target: TARGET,
-        logLevel: 'silent'
+        logLevel: 'silent',
         plugins: [envFilePlugin]   // <**************** USAGE ****************
     })
     .then(r => { console.log("Build succeeded.") })
