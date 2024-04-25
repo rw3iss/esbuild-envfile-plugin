@@ -55,6 +55,8 @@ module.exports = {
                 } catch (e) {
                     console.warn('Exception in esbuild-envfile-plguin build.onLoad():', e);
                 }
+            } else {
+                contents = JSON.stringify(process.env);
             }
 
             return {
