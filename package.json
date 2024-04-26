@@ -1,9 +1,11 @@
 {
     "name": "esbuild-envfile-plugin",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "esbuild plugin to load a .env file from the current directory or any parent. It will combine the environment variables with existing/system-wide process.env variables.",
     "main": "index.js",
-    "scripts": {},
+    "scripts": {
+        "test": ""
+    },
     "keywords": [
         "esbuild",
         "esbuild plugin",
@@ -18,7 +20,7 @@
     "author": "Ryan Weiss <rw3iss@gmail.com>",
     "license": "ISC",
     "dependencies": {
-        "dotenv": "16.0.3"
+        "dotenv": "16.4.5"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"

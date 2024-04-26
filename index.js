@@ -1,27 +1,8 @@
 const path = require("path");
 const fs = require("fs");
+const { findEnvFile } = require("./utils");
 
 const DEFAULT_ENV = process.env.NODE_ENV || "development";
-
-function _findEnvFile(dir, rootPath, env) {
-    try {
-        if (fs.existsSync(`${dir}/.env.${env}`)) {
-            return `${dir}/.env.${env}`;
-        } else if (fs.existsSync(`${dir}/.env`)) {
-            return `${dir}/.env`;
-        } else if (dir && dir != '/') {
-            if (dir === rootPath) {
-                // stop at project root
-                return undefined;
-            }
-            const next = path.resolve(dir, "../");
-            return _findEnvFile(next, rootPath, env);
-        }
-        return undefined;
-    } catch (e) {
-        console.warn("Exception in esbuild-envfile-plugin _findEnvFile():", e);
-    }
-}
 
 module.exports = {
     name: "env",
@@ -34,7 +15,7 @@ module.exports = {
                 path: args.path,
                 pluginData: {
                     ...args.pluginData,
-                    envPath: _findEnvFile(args.resolveDir, rootPath, env),
+                    envPath: findEnvFile(args.resolveDir, rootPath, env),
                 },
                 namespace: "env-ns",
             };
@@ -55,6 +36,8 @@ module.exports = {
                 } catch (e) {
                     console.warn('Exception in esbuild-envfile-plguin build.onLoad():', e);
                 }
+            } else {
+                contents = JSON.stringify(process.env);
             }
 
             return {
