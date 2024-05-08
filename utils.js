@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs");
 const findEnvFile = (dir, rootPath, env) => {
     try {
         if (fs.existsSync(`${dir}/.env.${env}`)) {
