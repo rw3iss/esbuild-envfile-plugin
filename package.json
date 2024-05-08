@@ -1,6 +1,6 @@
 {
     "name": "esbuild-envfile-plugin",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "esbuild plugin to load a .env file from the current directory or any parent. It will combine the environment variables with existing/system-wide process.env variables.",
     "main": "index.js",
     "scripts": {
